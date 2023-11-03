@@ -24,7 +24,7 @@ const deleteById = async (req, res, next) => {
   const { contactId } = req.params;
   const result = await contacts.removeContact(contactId);
   if (!result) {
-    throw errorHttp(404, "Not Found");
+    throw ErrorHttp(404, "Not Found");
   }
   res.json({
     message: "Contact Deleted",
@@ -35,7 +35,7 @@ const updateById = async (req, res, next) => {
   const { contactId } = req.params;
   const result = await contacts.updateContact(contactId, req.body);
   if (!result) {
-    throw errorHttp(404, "Not Found");
+    throw ErrorHttp(404, "Not Found");
   }
   res.json(result);
 };
