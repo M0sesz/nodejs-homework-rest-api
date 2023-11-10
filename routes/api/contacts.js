@@ -2,16 +2,29 @@ const express = require("express");
 
 const func = require("../../controllApi/controllApi");
 
-const { validate } = require("../../middlewares");
+const mongoError = require("../../errors/handleMongoError");
 
-const schemas = require("../../validation/contactsJoi");
+const { validate, idValidate } = require("../../middlewares");
+
+const { newSchema, updateSchema } = require("../../models/contacts");
 
 const router = express.Router();
 
 router.get("/", func.getAll);
-router.get("/:contactId", func.getById);
-router.post("/", validate(schemas.addSchema), func.add);
-router.delete("/:contactId", func.deleteById);
-router.put("/:contactId", validate(schemas.addSchema), func.updateById);
+
+router.get("/:contactId", idValidate, func.getById);
+
+router.post("/", mongoError, func.add);
+
+router.delete("/:contactId", idValidate, func.deleteById);
+
+router.put("/:contactId", idValidate, validate(newSchema), func.updateById);
+
+router.patch(
+  "/:contactId/favorite",
+  idValidate,
+  validate(updateSchema),
+  func.updateStatusContact
+);
 
 module.exports = router;

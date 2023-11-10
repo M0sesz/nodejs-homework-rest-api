@@ -1,41 +1,53 @@
-const { ErrorHttp, helpFunc } = require("../errors");
-const contacts = require("../models/contacts");
+const { ErrorHttps, helpFunc } = require("../errors");
+const { Contact } = require("../models/contacts");
 
 const getAll = async (req, res, next) => {
-  const result = await contacts.listContacts();
+  const result = await Contact.find();
   res.json(result);
+  console.log("Returning result:", result);
 };
 
 const getById = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await contacts.getContactById(contactId);
+  const result = await Contact.findById(contactId);
   if (!result) {
-    throw ErrorHttp(404, "Not Found");
+    throw ErrorHttps(404, "Not Found");
   }
   res.json(result);
 };
 
 const add = async (req, res, next) => {
-  const result = await contacts.addContact(req.body);
+  const result = await Contact.create(req.body);
   res.status(201).json(result);
 };
 
 const deleteById = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await contacts.removeContact(contactId);
+  const result = await Contact.findByIdAndDelete(contactId);
   if (!result) {
-    throw ErrorHttp(404, "Not Found");
+    throw ErrorHttps(404, "Not Found");
   }
-  res.json({
-    message: "Contact Deleted",
-  });
+  res.json({ message: "Contact Deleted :)" });
 };
 
 const updateById = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await contacts.updateContact(contactId, req.body);
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
+    new: true,
+  });
   if (!result) {
-    throw ErrorHttp(404, "Not Found");
+    throw ErrorHttps(404, "Not found");
+  }
+  res.json(result);
+};
+
+const updateStatusContact = async (req, res, next) => {
+  const { contactId } = req.params;
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
+    new: true,
+  });
+  if (!result) {
+    throw ErrorHttps(404, "Not Found");
   }
   res.json(result);
 };
@@ -46,4 +58,5 @@ module.exports = {
   add: helpFunc(add),
   deleteById: helpFunc(deleteById),
   updateById: helpFunc(updateById),
+  updateStatusContact: helpFunc(updateStatusContact),
 };
