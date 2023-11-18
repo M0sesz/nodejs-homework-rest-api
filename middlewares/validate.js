@@ -1,10 +1,10 @@
-const { ErrorHttp } = require("../errors");
+const { ErrorHttps } = require("../errors");
 
 const validate = (schema) => {
   const func = (req, res, next) => {
     const { error } = schema.validate(req.body);
     if (error) {
-      next(ErrorHttp(400, error.message));
+      next(ErrorHttps(400, error.message));
     }
     next();
   };
