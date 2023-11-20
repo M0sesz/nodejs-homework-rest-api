@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get("/", auth, func.getAll);
 
-router.get("/:contactId", idValidate, func.getById);
+router.get("/:contactId", idValidate, auth, func.getById);
 
 router.post("/", auth, func.add);
 
@@ -27,6 +27,7 @@ router.put(
 router.patch(
   "/:contactId/favorite",
   idValidate,
+  auth,
   validate(updateSchema),
   func.updateStatusContact
 );
