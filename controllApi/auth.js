@@ -4,20 +4,32 @@ const jwt = require("jsonwebtoken");
 
 const { User } = require("../models/user");
 
+const gravatar = require("gravatar");
+
 const { JWT_SECRET } = process.env;
 
 const register = async (req, res) => {
-  const { email, password, subscription } = req.body;
+  const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (user) {
     return res.status(409).json({ error: "Email already in use" });
   }
   const hashPassword = await bcrypt.hash(password, 10);
 
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const avatarURL = gravatar.url(email, { s: "200", r: "pg", d: "mm" });
+
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+    avatarURL,
+  });
 
   res.status(201).json({
-    user: { email: newUser.email, subscription: newUser.subscription },
+    user: {
+      email: newUser.email,
+      subscription: newUser.subscription,
+      avatarURL: newUser.avatarURL,
+    },
   });
 };
 
